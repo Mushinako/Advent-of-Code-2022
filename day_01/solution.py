@@ -37,7 +37,7 @@ class Solution(SolutionAbstract):
         """
         return max(map(sum, self.data))
 
-    def part_2(self) -> ...:
+    def part_2(self) -> int:
         """
         Day 01 part 2 solution.
         """
