@@ -29,7 +29,7 @@ _ALL_COMMANDS = (
 
 
 def _main() -> None:
-    parser = argparse.ArgumentParser(description="AoC 2021 day 01")
+    parser = argparse.ArgumentParser(description="AoC 2022")
     parser.add_argument("command", choices=_ALL_COMMANDS)
     parser.add_argument("day", type=int, choices=range(1, 26))
     parser.add_argument("part", type=int, choices=(1, 2), nargs="?")
@@ -50,7 +50,7 @@ def _main() -> None:
             data = data.replace("xx", f"{args.day:>02}").replace("-1", str(args.day))
             with subpath.open("w") as f:
                 f.write(data)
-        webbrowser.open("https://adventofcode.com/2021")
+        webbrowser.open("https://adventofcode.com/2022")
         download_input(day=args.day)
         return
 
@@ -79,12 +79,13 @@ def _get_solution(day: int, part: int) -> str | int:
     solution_module = import_module(f"{dir_name}.solution")
     SolutionClass: type[SolutionAbstract] = getattr(solution_module, "Solution")
     solution_obj = SolutionClass()
-    if part == 1:
-        return solution_obj.part_1()
-    elif part == 2:
-        return solution_obj.part_2()
-    else:
-        raise ValueError(f"Unknown part number {part}.")
+    match part:
+        case 1:
+            return solution_obj.part_1()
+        case 2:
+            return solution_obj.part_2()
+        case _:
+            raise ValueError(f"Unknown part number {part}.")
 
 
 if __name__ == "__main__":

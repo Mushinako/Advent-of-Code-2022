@@ -7,3 +7,6 @@ config.yml
 
 # Formatting
 .flake8
+
+# Inputs
+**/input.txt

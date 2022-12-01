@@ -21,7 +21,11 @@ class SolutionAbstract(ABC):
     def _get_raw_data(self) -> list[str]:
         path = get_input_path(self.day)
         with path.open("r") as f:
-            return [d for line in f.readlines() if (d := line.strip())]
+            lines = [line.strip() for line in f.readlines()]
+        # Remove trailing empty lines
+        while not lines[-1]:
+            lines.pop()
+        return lines
 
     @staticmethod
     @abstractmethod

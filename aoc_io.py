@@ -5,12 +5,12 @@ Get input from and submit answer to AOC
 
 from __future__ import annotations
 
-from time import sleep
 from datetime import datetime
-from zoneinfo import ZoneInfo
-from string import Template
 from pathlib import Path
+from string import Template
+from time import sleep
 from typing import TYPE_CHECKING
+from zoneinfo import ZoneInfo
 
 import requests
 import yaml
@@ -28,8 +28,8 @@ _CONFIG_PATH = Path(__file__).resolve().parent / "config.yml"
 with _CONFIG_PATH.open("r") as f:
     _CONFIG = yaml.safe_load(f)
 
-DATA_URL = Template("https://adventofcode.com/2021/day/${day}/input")
-ANSWER_URL = Template("https://adventofcode.com/2021/day/${day}/answer")
+DATA_URL = Template("https://adventofcode.com/2022/day/${day}/input")
+ANSWER_URL = Template("https://adventofcode.com/2022/day/${day}/answer")
 
 _COOKIES = _CONFIG["cookies"]
 
@@ -47,7 +47,7 @@ def download_input(day: int, input_path: Optional[Path] = None) -> None:
     if day not in _DAY_CHOICES:
         raise ValueError(f"{day=} is not in range 1..25")
     # One extra second just to be sure
-    target_time_est = datetime(2021, 12, day, 0, 0, 1, tzinfo=ZoneInfo("EST"))
+    target_time_est = datetime(2022, 12, day, 0, 0, 1, tzinfo=ZoneInfo("EST"))
     target_time_local = datetime.fromtimestamp(target_time_est.timestamp())
 
     while (now := datetime.now()) < target_time_local:
@@ -109,7 +109,10 @@ def submit_output(day: int, part: Literal[1, 2], answer: str | int) -> None:
         raise ConnectionError("Failed to submit response.")
 
     html = BeautifulSoup(data, "html.parser")
-    response_text: str = html.article.p.text
+    try:
+        response_text: str = html.article.p.text
+    except AttributeError as err:
+        raise ValueError(f"Unknown response html: {data}") from err
     if response_text.startswith("You don't"):
         print(Fore.YELLOW + response_text)
     elif response_text.startswith("That's the"):
