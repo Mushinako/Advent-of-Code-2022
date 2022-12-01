@@ -1,0 +1,9 @@
+# Python
+venv/
+**/__pycache__/
+
+# Secrets
+config.yml
+
+# Formatting
+.flake8
