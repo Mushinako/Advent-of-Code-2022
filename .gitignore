@@ -10,3 +10,6 @@ config.yml
 
 # Inputs
 **/input.txt
+
+# Poetry
+poetry.lock
