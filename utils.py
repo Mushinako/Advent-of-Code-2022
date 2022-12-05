@@ -18,10 +18,14 @@ class SolutionAbstract(ABC):
         raw_data = self._get_raw_data()
         self.data = self._process_data(raw_data)
 
+    def _get_input_path(self) -> Path:
+        """"""
+        return get_input_path(self.day)
+
     def _get_raw_data(self) -> list[str]:
-        path = get_input_path(self.day)
+        path = self._get_input_path()
         with path.open("r") as f:
-            lines = [line.strip() for line in f.readlines()]
+            lines = [line.strip("\r\n") for line in f.readlines()]
         # Remove trailing empty lines
         while not lines[-1]:
             lines.pop()
