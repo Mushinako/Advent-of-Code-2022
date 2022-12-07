@@ -77,6 +77,9 @@ class Solution(SolutionAbstract):
 
         return curr_dir.size
 
+    def repr(self) -> str:
+        return str(self.data)
+
 
 class _Node:
     name: str
@@ -95,6 +98,15 @@ class _Directory(_Node):
     def __init__(self, *, name: str) -> None:
         super().__init__(name=name)
         self.children_map = {}
+
+    def __str__(self) -> str:
+        self_str = f"- {self.name} (dir)"
+        children_strs = [str(child) for child in self.children_map.values()]
+        children_str = "\n".join(children_strs)
+        padded_children_str = "\n".join(
+            f"  {child_str}" for child_str in children_str.split("\n")
+        )
+        return f"{self_str}\n{padded_children_str}"
 
     @property
     def size(self) -> int:
@@ -125,3 +137,6 @@ class _File(_Node):
     def __init__(self, *, name: str, size: int) -> None:
         super().__init__(name=name)
         self.size = size
+
+    def __str__(self) -> str:
+        return f"- {self.name} (file, size={self.size})"
