@@ -22,8 +22,7 @@ class Solution(SolutionAbstract):
     day = 10
     data: _Data
 
-    @staticmethod
-    def _process_data(raw_data: list[str]) -> _Data:
+    def _process_data(self, raw_data: list[str]) -> _Data:
         """
         Process day 10 data.
         """

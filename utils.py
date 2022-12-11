@@ -31,9 +31,8 @@ class SolutionAbstract(ABC):
             lines.pop()
         return lines
 
-    @staticmethod
     @abstractmethod
-    def _process_data(raw_data: list[str]) -> Any:
+    def _process_data(self, raw_data: list[str]) -> Any:
         """
         Process input data.
         """

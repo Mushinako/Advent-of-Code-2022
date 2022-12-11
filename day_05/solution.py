@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING, ClassVar
 from utils import SolutionAbstract
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
     from typing import Self
 
 
@@ -18,8 +17,7 @@ class Solution(SolutionAbstract):
     day = 5
     data: _Data
 
-    @staticmethod
-    def _process_data(raw_data: list[str]) -> _Data:
+    def _process_data(self, raw_data: list[str]) -> _Data:
         """
         Process day 05 data.
         """
