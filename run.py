@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import shutil
-import webbrowser
 from argparse import ArgumentParser
 from importlib import import_module
 from pathlib import Path
@@ -106,7 +105,8 @@ def _prepare(day: int) -> None:
         data = data.replace("xx", f"{day:>02}").replace("-1", str(day))
         with subpath.open("w") as f:
             f.write(data)
-    webbrowser.open("https://adventofcode.com/2022")
+    print("Base URL: https://adventofcode.com/2022")
+    print(f"Day URL: https://adventofcode.com/2022/{day}")
     download_input(day=day)
 
 
