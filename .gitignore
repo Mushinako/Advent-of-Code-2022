@@ -16,3 +16,6 @@ poetry.lock
 
 # VS Code
 .vscode/
+
+# Temp files
+tmp.*
