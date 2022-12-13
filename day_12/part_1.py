@@ -6,10 +6,11 @@ from __future__ import annotations
 from heapq import heappop, heappush
 from typing import TYPE_CHECKING
 
-from .utils import AStarBase, AStarNode, Map
+from .utils import AStarBase, AStarNode
 
 if TYPE_CHECKING:
     from .solution import Solution
+    from .typings import C, R
 
 
 def part_1(self: Solution) -> int:
@@ -22,29 +23,12 @@ def part_1(self: Solution) -> int:
 class _AStar(AStarBase):
     """"""
 
-    map_: Map
-    row_count: int
-    col_count: int
-    nodes_map: list[list[AStarNode]]
-    nodes_heap: list[AStarNode]
-    visited_nodes: set[AStarNode]
-
-    def __init__(self, map_: Map) -> None:
-        self.map_ = map_
-        self.row_count = len(map_.data)
-        self.col_count = len(map_.data[0])
-        er, ec = map_.end
-        self.nodes_map = [
-            [
-                AStarNode(
-                    coord=(r, c), h=abs(r - er) + abs(c - ec), height=self.map_[r, c]
-                )
-                for c in range(self.col_count)
-            ]
-            for r in range(self.row_count)
-        ]
-        self.nodes_heap = []
-        self.visited_nodes = set()
+    def _create_node(self, r: R, c: C) -> AStarNode:
+        """"""
+        er, ec = self.map_.end
+        return AStarNode(
+            coord=(r, c), h=abs(r - er) + abs(c - ec), height=self.map_[r, c]
+        )
 
     def run(self) -> list[AStarNode]:
         """"""

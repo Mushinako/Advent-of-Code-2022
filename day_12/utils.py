@@ -9,7 +9,7 @@ from functools import total_ordering
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .typings import Coord
+    from .typings import C, Coord, R
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -89,8 +89,19 @@ class AStarBase(ABC):
     nodes_heap: list[AStarNode]
     visited_nodes: set[AStarNode]
 
-    @abstractmethod
     def __init__(self, map_: Map) -> None:
+        self.map_ = map_
+        self.row_count = len(map_.data)
+        self.col_count = len(map_.data[0])
+        self.nodes_map = [
+            [self._create_node(r, c) for c in range(self.col_count)]
+            for r in range(self.row_count)
+        ]
+        self.nodes_heap = []
+        self.visited_nodes = set()
+
+    @abstractmethod
+    def _create_node(self, r: R, c: C) -> AStarNode:
         ...
 
     def __getitem__(self, coord: Coord) -> AStarNode:
