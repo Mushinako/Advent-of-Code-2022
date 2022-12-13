@@ -39,7 +39,6 @@ class _AStar(AStarBase):
 
         while self.nodes_heap:
             curr_node = heappop(self.nodes_heap)
-            # print(f"Visiting node at {curr_node}...")
             if curr_node.g is None:
                 raise ValueError("Missing `g` value")
             if curr_node.route is None:
