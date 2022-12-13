@@ -1,11 +1,10 @@
 # Day 12 (Hill Climbing Algorithm)
 
-## Part 1
+## Part 1 & 2
 
-[A*][1] all the waaaaaaaay! The heuristic can be calculated via the
-[Manhattan distance][2] given only the cardinal direction movements are allowed
+Using the magic of [NetworkX][1], I never have to code [A*][2] and
+[Dijkstra][3]!
 
-## Part 2
-
-[1]: https://en.wikipedia.org/wiki/A*_search_algorithm
-[2]: https://en.wikipedia.org/wiki/Taxicab_geometry
+[1]: https://networkx.org/documentation/stable/index.html
+[2]: https://en.wikipedia.org/wiki/A*_search_algorithm
+[3]: https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm

@@ -12,6 +12,7 @@ beautifulsoup4 = "^4.11.1"
 colorama = "^0.4.6"
 requests = "^2.28.1"
 PyYAML = "^6.0"
+networkx = "^2.8.8"
 
 [tool.poetry.group.dev.dependencies]
 pip = "^22.3.1"
