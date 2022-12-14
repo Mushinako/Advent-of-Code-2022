@@ -55,7 +55,6 @@ class Solution(SolutionAbstract):
             stop_reason = self.data.drop_sand()
             if stop_reason == _Map.StopReason.FULL:
                 break
-        print(self.data)
         return i
 
 
@@ -86,9 +85,9 @@ class _Map:
             self.add_line(line)
 
     def __str__(self) -> str:
-        col_span = self.max_r + 2
+        col_span = self.max_r + 1
         return "\n".join(
-            "".join(cell.value for cell in row[500 - col_span : 500 + col_span])
+            "".join(cell.value for cell in row[500 - col_span : 500 + col_span + 1])
             for row in self.map_
         )
 
