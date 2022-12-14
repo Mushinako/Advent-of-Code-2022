@@ -7,7 +7,7 @@ simple, and with careful implementations the result can be stunning!
 
 ### Part 2 Visualization
 
-`#`s are stones and `.`s are sands
+`█`s are rocks and `.`s are sands
 
 ```text
                                                                                                                                                                             .                                                                                                                                                                           
