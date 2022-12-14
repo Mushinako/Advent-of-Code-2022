@@ -55,6 +55,7 @@ class Solution(SolutionAbstract):
             stop_reason = self.data.drop_sand()
             if stop_reason == _Map.StopReason.FULL:
                 break
+        print(self.data)
         return i
 
 
@@ -67,7 +68,7 @@ class _Map:
 
     class Block(Enum):
         AIR = " "
-        ROCK = "#"
+        ROCK = "█"
         SAND = "."
 
     class StopReason(Enum):
