@@ -12,7 +12,7 @@ from utils import SolutionAbstract
 if TYPE_CHECKING:
     from typing import TypeAlias
 
-    _Data: TypeAlias = "_Map"
+    _Data: TypeAlias = "Map"
     _R = int
     _C = int
     _Coord = tuple[_R, _C]
@@ -32,7 +32,7 @@ class Solution(SolutionAbstract):
         ]
         # Revert order
         lines = [[(int(r), int(c)) for c, r in line] for line in line_strs]
-        return _Map(lines)
+        return Map(lines)
 
     def part_1(self) -> int:
         """
@@ -41,7 +41,7 @@ class Solution(SolutionAbstract):
         i = 0  # Make linter happy
         for i in count(0):
             stop_reason = self.data.drop_sand()
-            if stop_reason == _Map.StopReason.VOID:
+            if stop_reason == Map.StopReason.VOID:
                 break
         return i
 
@@ -53,12 +53,12 @@ class Solution(SolutionAbstract):
         i = 0  # Make linter happy
         for i in count(0):
             stop_reason = self.data.drop_sand()
-            if stop_reason == _Map.StopReason.FULL:
+            if stop_reason == Map.StopReason.FULL:
                 break
         return i
 
 
-class _Map:
+class Map:
     """"""
 
     map_: list[list[Block]]
@@ -67,7 +67,7 @@ class _Map:
 
     class Block(Enum):
         AIR = " "
-        ROCK = "█"
+        ROCK = "#"
         SAND = "."
 
     class StopReason(Enum):
@@ -78,7 +78,7 @@ class _Map:
     def __init__(self, lines: list[list[_Coord]]) -> None:
         self.max_r = max(r for line in lines for r, _ in line)
         max_c = 500 + self.max_r + 3
-        self.map_ = [[_Map.Block.AIR] * (max_c + 1) for _ in range(self.max_r + 3)]
+        self.map_ = [[Map.Block.AIR] * (max_c + 1) for _ in range(self.max_r + 3)]
         self.has_floor = False
 
         for line in lines:
@@ -95,7 +95,7 @@ class _Map:
         """"""
         line = line.copy()
         pr, pc = line.pop()
-        self.map_[pr][pc] = _Map.Block.ROCK
+        self.map_[pr][pc] = Map.Block.ROCK
         for r, c in reversed(line):
             if pr == r:
                 if pc < c:
@@ -111,7 +111,7 @@ class _Map:
                 raise ValueError("Cannot for line of rocks")
 
             for cr, cc in coords:
-                self.map_[cr][cc] = _Map.Block.ROCK
+                self.map_[cr][cc] = Map.Block.ROCK
 
             pr = r
             pc = c
@@ -126,25 +126,25 @@ class _Map:
         """"""
         r = 0
         c = 500
-        if self.map_[r][c] != _Map.Block.AIR:
-            return _Map.StopReason.FULL
+        if self.map_[r][c] != Map.Block.AIR:
+            return Map.StopReason.FULL
 
         while True:
             nr = r + 1
             if not self.has_floor and nr > self.max_r:
                 # Fell into the void
-                return _Map.StopReason.VOID
+                return Map.StopReason.VOID
             nc = c
-            if self.map_[nr][nc] != _Map.Block.AIR:
+            if self.map_[nr][nc] != Map.Block.AIR:
                 # Try bottom left
                 nc = c - 1
-                if self.map_[nr][nc] != _Map.Block.AIR:
+                if self.map_[nr][nc] != Map.Block.AIR:
                     # Try bottom right
                     nc = c + 1
-                    if self.map_[nr][nc] != _Map.Block.AIR:
+                    if self.map_[nr][nc] != Map.Block.AIR:
                         # Settle on top
-                        self.map_[r][c] = _Map.Block.SAND
-                        return _Map.StopReason.SETTLED
+                        self.map_[r][c] = Map.Block.SAND
+                        return Map.StopReason.SETTLED
             # Keep dropping
             r = nr
             c = nc
