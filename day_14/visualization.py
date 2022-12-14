@@ -10,6 +10,7 @@ from PIL import Image
 from .solution import Map, Solution
 
 _CURR_DIR = Path(__file__).resolve().parent
+_SIZE_FACTOR = 5
 
 
 def _visualize_p1() -> None:
@@ -45,7 +46,9 @@ def _visualize(map_: Map, file_stem: str) -> None:
             end_col = len(data[0]) - 1 - max(0, c - 1)
             break
 
-    img = Image.new("RGB", size=(end_col - start_col + 1, len(data)))
+    width = (end_col - start_col + 1) * _SIZE_FACTOR
+    height = len(data) * _SIZE_FACTOR
+    img = Image.new(mode="RGB", size=(width, height))
 
     for r, row in enumerate(data):
         for c, cell in enumerate(row[start_col : end_col + 1]):
@@ -58,7 +61,9 @@ def _visualize(map_: Map, file_stem: str) -> None:
                     color = (194, 178, 128)
                 case _:
                     raise ValueError(f"Unknown block {cell}")
-            img.putpixel((c, r), color)
+            for x in range(_SIZE_FACTOR * c, _SIZE_FACTOR * (c + 1)):
+                for y in range(_SIZE_FACTOR * r, _SIZE_FACTOR * (r + 1)):
+                    img.putpixel((x, y), color)
 
     out_path = _CURR_DIR / f"{file_stem}.png"
     img.save(out_path)
