@@ -40,7 +40,7 @@ class Solution(SolutionAbstract):
         """
         i = 0  # Make linter happy
         for i in count(0):
-            stop_reason = self.data.drop_sand_into_void()
+            stop_reason = self.data.drop_sand()
             if stop_reason == _Map.StopReason.VOID:
                 break
         return i
@@ -52,7 +52,7 @@ class Solution(SolutionAbstract):
         self.data.add_floor()
         i = 0  # Make linter happy
         for i in count(0):
-            stop_reason = self.data.drop_sand_into_void()
+            stop_reason = self.data.drop_sand()
             if stop_reason == _Map.StopReason.FULL:
                 break
         return i
@@ -122,7 +122,7 @@ class _Map:
         self.add_line([(r, 0), (r, len(self.map_[0]) - 1)])
         self.has_floor = True
 
-    def drop_sand_into_void(self) -> StopReason:
+    def drop_sand(self) -> StopReason:
         """"""
         r = 0
         c = 500
