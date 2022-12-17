@@ -5,9 +5,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from functools import cache
 from itertools import permutations
-from typing import TYPE_CHECKING
 
 import networkx as nx
 from matplotlib import pyplot as plt
@@ -97,31 +95,29 @@ class Solution(SolutionAbstract):
             for start, end in permutations(interesting_nodes, 2)
         }
 
-        cache: dict[tuple[frozenset[_Player], int, int, int], int] = {}
+        # cache: dict[tuple[frozenset[_Player], int, int, int], int] = {}
 
         def run(
             *, p1: _Player, p2: _Player, time: int, score: int, score_delta: int
         ) -> int:
             """"""
-            key = (frozenset([p1, p2]), time, score, score_delta)
-            cached = cache.get(key)
-            if cached is not None:
-                return cached
+            # key = (frozenset([p1, p2]), time, score, score_delta)
+            # cached = cache.get(key)
+            # if cached is not None:
+            #     return cached
 
-            # print(f"Trying {p1=}; {p2=}; {time=}; {score=}; {score_delta=}")
+            print(f"Trying {p1=}; {p2=}; {time=}; {score=}; {score_delta=}")
             # Wander around for the rest of the time
             max_score = score + time * score_delta
             # P1 in waiting
             if p1.wait > 0:
-                states1 = [
-                    (_Player(visited=p1.visited, node=p1.node, wait=p1.wait - 1), 0)
-                ]
+                states1 = [(_Player(visited=p1.visited, wait=p1.wait - 1), 0)]
             # P1 needs new node
             else:
                 ends1 = [
                     end
                     for (start, end), travel_time in shortest_lengths.items()
-                    if start == p1.node
+                    if start == p1.visited[-1]
                     and end not in p1.visited
                     and end not in p2.visited
                     and travel_time < time
@@ -129,9 +125,8 @@ class Solution(SolutionAbstract):
                 states1 = [
                     (
                         _Player(
-                            visited=p1.visited | {end1},
-                            node=end1,
-                            wait=shortest_lengths[p1.node, end1],
+                            visited=p1.visited + (end1,),
+                            wait=shortest_lengths[p1.visited[-1], end1],
                         ),
                         valves[end1],
                     )
@@ -139,15 +134,13 @@ class Solution(SolutionAbstract):
                 ]
             # P2 in waiting
             if p2.wait > 0:
-                states2 = [
-                    (_Player(visited=p2.visited, node=p2.node, wait=p2.wait - 1), 0)
-                ]
+                states2 = [(_Player(visited=p2.visited, wait=p2.wait - 1), 0)]
             # P2 needs new node
             else:
                 ends2 = [
                     end
                     for (start, end), travel_time in shortest_lengths.items()
-                    if start == p2.node
+                    if start == p2.visited[-1]
                     and end not in p1.visited
                     and end not in p2.visited
                     and travel_time < time
@@ -155,9 +148,8 @@ class Solution(SolutionAbstract):
                 states2 = [
                     (
                         _Player(
-                            visited=p2.visited | {end2},
-                            node=end2,
-                            wait=shortest_lengths[p2.node, end2],
+                            visited=p2.visited + (end2,),
+                            wait=shortest_lengths[p2.visited[-1], end2],
                         ),
                         valves[end2],
                     )
@@ -166,7 +158,7 @@ class Solution(SolutionAbstract):
             # Run
             for np1, ndelta1 in states1:
                 for np2, ndelta2 in states2:
-                    if np1.node == np2.node:
+                    if np1.visited[-1] == np2.visited[-1]:
                         continue
                     end_score = run(
                         p1=np1,
@@ -177,12 +169,12 @@ class Solution(SolutionAbstract):
                     )
                     max_score = max(max_score, end_score)
 
-            cache[key] = max_score
+            # cache[key] = max_score
             return max_score
 
         return run(
-            p1=_Player(visited=frozenset(["AA"]), node="AA", wait=0),
-            p2=_Player(visited=frozenset(["AA"]), node="AA", wait=0),
+            p1=_Player(visited=("AA",), wait=0),
+            p2=_Player(visited=("AA",), wait=0),
             time=26,
             score=0,
             score_delta=0,
@@ -211,9 +203,8 @@ class _Data:
 class _Player:
     """"""
 
-    visited: frozenset[str]
-    node: str
+    visited: tuple[str, ...]
     wait: int
 
     def __hash__(self) -> int:
-        return hash((self.visited, self.node, self.wait))
+        return hash((self.visited, self.wait))
