@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from functools import cached_property
 from itertools import permutations
 
 import networkx as nx
@@ -47,31 +48,23 @@ class Solution(SolutionAbstract):
         Day 16 part 1 solution.
         """
         valves = self.data.valves
-        interesting_nodes = ["AA"] + list(valves)
-        shortest_lengths: dict[tuple[str, str], int] = {
-            (start, end): nx.shortest_path_length(
-                self.data.graph, source=start, target=end
-            )
-            for start, end in permutations(interesting_nodes, 2)
-        }
+        shortest_lengths = self.data.lengths_map
 
-        def run(
-            *, path: list[str], node: str, time: int, score: int, score_delta: int
-        ) -> int:
+        def run(*, path: list[str], time: int, score: int, score_delta: int) -> int:
             """"""
+            node = path[-1]
             possible_ends = [
                 end
-                for (start, end), travel_time in shortest_lengths.items()
-                if start == node and end not in path and travel_time < time
+                for end, travel_time in shortest_lengths[node].items()
+                if end not in path and travel_time < time
             ]
             # Wander around for the rest of the time
             max_score = score + time * score_delta
             # Go to another valve
             for end in possible_ends:
-                travel_time = shortest_lengths[node, end]
+                travel_time = shortest_lengths[node][end]
                 end_score = run(
                     path=path + [end],
-                    node=end,
                     time=time - travel_time - 1,
                     score=score + (travel_time + 1) * score_delta,
                     score_delta=score_delta + valves[end],
@@ -80,20 +73,14 @@ class Solution(SolutionAbstract):
             # Get max score
             return max_score
 
-        return run(path=["AA"], node="AA", time=30, score=0, score_delta=0)
+        return run(path=["AA"], time=30, score=0, score_delta=0)
 
     def part_2(self) -> int:
         """
         Day 16 part 2 solution.
         """
         valves = self.data.valves
-        interesting_nodes = ["AA"] + list(valves)
-        shortest_lengths: dict[tuple[str, str], int] = {
-            (start, end): nx.shortest_path_length(
-                self.data.graph, source=start, target=end
-            )
-            for start, end in permutations(interesting_nodes, 2)
-        }
+        shortest_lengths = self.data.lengths_map
 
         # cache: dict[tuple[frozenset[_Player], int, int, int], int] = {}
 
@@ -114,11 +101,11 @@ class Solution(SolutionAbstract):
                 states1 = [(_Player(visited=p1.visited, wait=p1.wait - 1), 0)]
             # P1 needs new node
             else:
+                node1 = p1.visited[-1]
                 ends1 = [
                     end
-                    for (start, end), travel_time in shortest_lengths.items()
-                    if start == p1.visited[-1]
-                    and end not in p1.visited
+                    for end, travel_time in shortest_lengths[node1].items()
+                    if end not in p1.visited
                     and end not in p2.visited
                     and travel_time < time
                 ]
@@ -126,7 +113,7 @@ class Solution(SolutionAbstract):
                     (
                         _Player(
                             visited=p1.visited + (end1,),
-                            wait=shortest_lengths[p1.visited[-1], end1],
+                            wait=shortest_lengths[node1][end1],
                         ),
                         valves[end1],
                     )
@@ -137,11 +124,11 @@ class Solution(SolutionAbstract):
                 states2 = [(_Player(visited=p2.visited, wait=p2.wait - 1), 0)]
             # P2 needs new node
             else:
+                node2 = p2.visited[-1]
                 ends2 = [
                     end
-                    for (start, end), travel_time in shortest_lengths.items()
-                    if start == p2.visited[-1]
-                    and end not in p1.visited
+                    for end, travel_time in shortest_lengths[node2].items()
+                    if end not in p1.visited
                     and end not in p2.visited
                     and travel_time < time
                 ]
@@ -149,7 +136,7 @@ class Solution(SolutionAbstract):
                     (
                         _Player(
                             visited=p2.visited + (end2,),
-                            wait=shortest_lengths[p2.visited[-1], end2],
+                            wait=shortest_lengths[node2][end2],
                         ),
                         valves[end2],
                     )
@@ -197,6 +184,19 @@ class Solution(SolutionAbstract):
 class _Data:
     graph: nx.DiGraph
     valves: dict[str, int]
+
+    @cached_property
+    def lengths_map(self) -> dict[str, dict[str, int]]:
+        """"""
+        interesting_nodes = ["AA"] + list(self.valves)
+        return {
+            start: {
+                end: nx.shortest_path_length(self.graph, source=start, target=end)
+                for end in self.valves
+                if start != end
+            }
+            for start in interesting_nodes
+        }
 
 
 @dataclass(frozen=True, kw_only=True)
